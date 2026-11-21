@@ -1,7 +1,6 @@
 #include <cstdio>
 #include <raylib.h>
 using vec2 = Vector2;
-template <size_t W, size_t H>
 
 int main() {
     const int screenWidth = 1000;
