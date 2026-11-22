@@ -7,7 +7,7 @@ using vec2 = Vector2;
 const int GridX = 20;
 const int GridY = 20;
 
-int close(bool arr[GridX][GridY], int cordX, int cordY){
+int close(const bool arr[GridX][GridY], int cordX, int cordY){
     int c = 0;
     for(int i(-1); i < 2; i++){
         for(int j(-1); j < 2; j++){
@@ -23,6 +23,28 @@ int close(bool arr[GridX][GridY], int cordX, int cordY){
     return c;
 }
 
+void newGeneretion(const bool arr[GridX][GridY], bool newGen[GridX][GridY]){
+    int h;
+    for(int i(0); i < GridX; i++){
+        for(int j(0); j < GridY; j++){
+            h = close(arr, i, j);
+            if(arr[i][j]){
+                if(h < 2){
+                    newGen[i][j] = false;
+                }
+                if(h == 2 || h == 3){
+                    newGen[i][j] = true;
+                }
+                if(h > 3){
+                    newGen[i][j] = false;
+                }
+            }else{
+                newGen[i][j] = (h == 3);
+            }
+        }
+    }
+}
+
 int main() {
     const int screenWidth = 1000;
     const int screenHeight = 700;
@@ -33,6 +55,7 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
     SetTargetFPS(60);
     bool grid[GridX][GridY]{};
+    bool nextGrid[GridX][GridY]{};
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(BLACK);
@@ -54,10 +77,18 @@ int main() {
                 if(grid[i][j]) {
                     myColor = {255, 0, 0, 255};
                 }
+                newGeneretion(grid, nextGrid);
                 temp = to_string(close(grid, i, j));
                 DrawRectangle(i*25, j*25, 25, 25, myColor);
                 DrawRectangleLines(i*25, j*25, 25, 25, BLACK);
-                DrawText(temp.c_str(), i*25, j*25, 15, WHITE);
+                DrawText(temp.c_str(), i*25+5, j*25+5, 15, {100, 100, 100, 255});
+            }
+        }
+        if(IsKeyPressed(KEY_SPACE)){
+            for (int i = 0; i < GridX; i++) {
+                for (int j = 0; j < GridY; j++) {
+                    grid[i][j] = nextGrid[i][j];
+                }
             }
         }
         DrawFPS(10, 10);
