@@ -51,6 +51,8 @@ int main() {
 
     string temp;
     Color myColor = {0, 255, 255, 255};
+    float timer = 0.0f;
+    bool sim = false;
 
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
     SetTargetFPS(60);
@@ -77,19 +79,32 @@ int main() {
                 if(grid[i][j]) {
                     myColor = {255, 0, 0, 255};
                 }
-                newGeneretion(grid, nextGrid);
                 temp = to_string(close(grid, i, j));
                 DrawRectangle(i*25, j*25, 25, 25, myColor);
                 DrawRectangleLines(i*25, j*25, 25, 25, BLACK);
                 DrawText(temp.c_str(), i*25+5, j*25+5, 15, {100, 100, 100, 255});
             }
         }
-        if(IsKeyPressed(KEY_SPACE)){
+        if(IsKeyPressed(KEY_N) && !sim){
+            newGeneretion(grid, nextGrid);
             for (int i = 0; i < GridX; i++) {
                 for (int j = 0; j < GridY; j++) {
                     grid[i][j] = nextGrid[i][j];
                 }
             }
+        }
+        timer += GetFrameTime();
+        if(IsKeyPressed(KEY_SPACE)){sim = !sim;}
+        while(timer >= 0.2f){
+            if(sim){
+                newGeneretion(grid, nextGrid);
+                for (int i = 0; i < GridX; i++) {
+                    for (int j = 0; j < GridY; j++) {
+                        grid[i][j] = nextGrid[i][j];
+                    }
+                }
+            }
+            timer -= 0.2f;
         }
         DrawFPS(10, 10);
         EndDrawing();
