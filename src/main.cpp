@@ -7,6 +7,18 @@ using vec2 = Vector2;
 const int GridX = 20;
 const int GridY = 20;
 
+float DelayPlus(float del){
+    float delay = 1/del;
+    if(delay == 500){return del;}
+    return 1/(delay+1);
+}
+
+float DelayMinus(float del){
+    float delay = 1/del;
+    if(delay == 1){return del;}
+    return 1/(delay-1);
+}
+
 int close(const bool arr[GridX][GridY], int cordX, int cordY){
     int c = 0;
     for(int i(-1); i < 2; i++){
@@ -52,6 +64,7 @@ int main() {
     string temp;
     Color myColor = {0, 255, 255, 255};
     float timer = 0.0f;
+    float GenDeley = 0.2f;
     bool sim = false;
 
     InitWindow(screenWidth, screenHeight, "Cellular Automata");
@@ -85,6 +98,12 @@ int main() {
                 DrawText(temp.c_str(), i*25+5, j*25+5, 15, {100, 100, 100, 255});
             }
         }
+        if(IsKeyPressed(KEY_EQUAL)){
+            GenDeley = DelayPlus(GenDeley);
+        }
+        if(IsKeyPressed(KEY_MINUS)){
+            GenDeley = DelayMinus(GenDeley);
+        }
         if(IsKeyPressed(KEY_N) && !sim){
             newGeneretion(grid, nextGrid);
             for (int i = 0; i < GridX; i++) {
@@ -95,7 +114,7 @@ int main() {
         }
         timer += GetFrameTime();
         if(IsKeyPressed(KEY_SPACE)){sim = !sim;}
-        while(timer >= 0.2f){
+        while(timer >= GenDeley){
             if(sim){
                 newGeneretion(grid, nextGrid);
                 for (int i = 0; i < GridX; i++) {
@@ -104,9 +123,11 @@ int main() {
                     }
                 }
             }
-            timer -= 0.2f;
+            timer -= GenDeley;
         }
-        DrawFPS(10, 10);
+        temp = to_string(1/GenDeley);
+        DrawText(temp.c_str(), 10, 500, 40, WHITE);
+        DrawFPS(510, 10);
         EndDrawing();
     }
     CloseWindow();
